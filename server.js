@@ -1,24 +1,23 @@
-import express from "express";
-import cors from "cors";
-
+const express = require("express");
+const cors = require("cors");
 const app = express();
 
-// MUHIM – Frontenddan POST so‘rovini qabul qilish uchun
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.send("Backend running on Render!");
-});
-
 app.post("/save", (req, res) => {
-    console.log("Keldi:", req.body);
+    console.log("Data received:", req.body);
 
-    return res.json({ status: "ok", received: req.body });
+    const { user_id, name, phone } = req.body;
+
+    if (!user_id || !name || !phone) {
+        return res.status(400).json({ error: "Missing data" });
+    }
+
+    res.json({ success: true });
 });
 
-// Render porti
-const port = process.env.PORT || 10000;
-app.listen(port, () => {
-    console.log("Server running on port", port);
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
