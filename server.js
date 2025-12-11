@@ -5,26 +5,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ====== API ======
+// ROOT URL -> test uchun
+app.get("/", (req, res) => {
+    res.send("Backend is running!");
+});
+
+// SAVE API
 app.post("/save", (req, res) => {
-    console.log("Kelgan ma'lumot:", req.body);
-
-    const { user_id, name, phone } = req.body;
-
-    if (!user_id || !name || !phone) {
-        return res.status(400).json({ error: "Missing data" });
-    }
-
-    // Hozircha faqat qaytarib yuboramiz
-    return res.json({
-        success: true,
-        message: "Data received!",
-        data: req.body
-    });
+    console.log("Data received:", req.body);
+    res.json({ success: true });
 });
 
-// ====== SERVER ======
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log("Server running on port", PORT));
