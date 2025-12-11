@@ -1,33 +1,70 @@
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
+const bcrypt = require("bcryptjs");
 
 const app = express();
-
-// CORS TO‘G‘RI YOQILDI
-app.use(cors({
-    origin: "*",       // barcha domenlarga ruxsat
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"]
-}));
-
+app.use(cors());
 app.use(express.json());
 
-// TEST ROUTE
+const dbFile = "users.json";
+
+function loadUsers() {
+    if (!fs.existsSync(dbFile)) return [];
+    return JSON.parse(fs.readFileSync(dbFile));
+}
+
+function saveUsers(data) {
+    fs.writeFileSync(dbFile, JSON.stringify(data, null, 2));
+}
+
+// Test
 app.get("/", (req, res) => {
-    res.send("Backend is running OK!");
+    res.send("Auth backend working!");
 });
 
-// DATA QABUL QILISH
-app.post("/save", (req, res) => {
-    console.log("Kelgan ma'lumot:", req.body);
+/* -------- SIGN UP -------- */
+app.post("/signup", async (req, res) => {
+    const { name, phone, password, user_id } = req.body;
 
-    if (!req.body.name || !req.body.phone || !req.body.user_id) {
-        return res.status(400).json({ success: false, msg: "Xato ma'lumot!" });
-    }
+    if (!name || !phone || !password)
+        return res.status(400).json({ error: "Ma'lumot yetarli emas!" });
 
-    res.json({ success: true, msg: "Ma'lumot saqlandi!" });
+    let users = loadUsers();
+
+    if (users.find(u => u.phone === phone))
+        return res.status(400).json({ error: "Bu raqam allaqachon ro'yxatdan o'tgan!" });
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    users.push({
+        name,
+        phone,
+        password: hashed,
+        user_id
+    });
+
+    saveUsers(users);
+
+    res.json({ success: true });
 });
 
-// PORT
+/* -------- LOGIN -------- */
+app.post("/login", async (req, res) => {
+    const { phone, password } = req.body;
+
+    let users = loadUsers();
+    let user = users.find(u => u.phone === phone);
+
+    if (!user) return res.status(400).json({ error: "Bunday foydalanuvchi yo'q!" });
+
+    const correct = await bcrypt.compare(password, user.password);
+
+    if (!correct)
+        return res.status(400).json({ error: "Parol noto‘g‘ri!" });
+
+    res.json({ success: true, user });
+});
+
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log("Server running on port " + PORT));
+app.listen(PORT, () => console.log("Server running on port", PORT));
