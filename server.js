@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 const DB_PATH = path.join(__dirname, "database.db");
-const BOT_TOKEN = process.env.BOT_TOKEN; // <- Render: set this
+const BOT_TOKEN = process.env.8209669427:AAEbRGmfewm3d-3E_rvw2MRwf9wdvX1MSWQ; // <- Render: set this
 const TELEGRAM_API = BOT_TOKEN ? `https://api.telegram.org/bot${BOT_TOKEN}` : null;
 
 let db;
@@ -152,3 +152,4 @@ app.post("/login", async (req, res) => {
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log("Server running on port", PORT));
+
