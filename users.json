@@ -1,0 +1,8 @@
+[
+  {
+    "phone": "+998901234567",
+    "name": "Ali",
+    "password": "hashed_password",
+    "telegram_id": 1234567
+  }
+]
