@@ -1,20 +1,33 @@
 const express = require("express");
 const cors = require("cors");
+
 const app = express();
 
-app.use(cors());
+// CORS TO‘G‘RI YOQILDI
+app.use(cors({
+    origin: "*",       // barcha domenlarga ruxsat
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"]
+}));
+
 app.use(express.json());
 
-// ROOT URL -> test uchun
+// TEST ROUTE
 app.get("/", (req, res) => {
-    res.send("Backend is running!");
+    res.send("Backend is running OK!");
 });
 
-// SAVE API
+// DATA QABUL QILISH
 app.post("/save", (req, res) => {
-    console.log("Data received:", req.body);
-    res.json({ success: true });
+    console.log("Kelgan ma'lumot:", req.body);
+
+    if (!req.body.name || !req.body.phone || !req.body.user_id) {
+        return res.status(400).json({ success: false, msg: "Xato ma'lumot!" });
+    }
+
+    res.json({ success: true, msg: "Ma'lumot saqlandi!" });
 });
 
+// PORT
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log("Server running on port", PORT));
+app.listen(PORT, () => console.log("Server running on port " + PORT));
