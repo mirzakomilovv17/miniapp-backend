@@ -5,8 +5,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ====== API ======
 app.post("/save", (req, res) => {
-    console.log("Data received:", req.body);
+    console.log("Kelgan ma'lumot:", req.body);
 
     const { user_id, name, phone } = req.body;
 
@@ -14,9 +15,15 @@ app.post("/save", (req, res) => {
         return res.status(400).json({ error: "Missing data" });
     }
 
-    res.json({ success: true });
+    // Hozircha faqat qaytarib yuboramiz
+    return res.json({
+        success: true,
+        message: "Data received!",
+        data: req.body
+    });
 });
 
+// ====== SERVER ======
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
